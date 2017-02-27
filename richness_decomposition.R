@@ -4,8 +4,8 @@ bbs <- read_csv("bbs_abundances_by_site.csv")
 species_by_site <- as.data.frame(matrix(0, ncol = length(unique(bbs$species)), nrow = length(unique(bbs$site))))
 names(species_by_site) <- as.integer(unique(bbs$species))
 
+#Species by site matrix
 site_ID <- unique(bbs$site)
-
 for (i in 1:length(site_ID)) {
   site_data <- subset(bbs, site == site_ID[i])
   for (j in 1:length(site_data)){
@@ -23,3 +23,4 @@ for (i in 1:length(site_ID)) {
 #       }
 #   }
 
+#Species cooccurence matrix using sorensen-based dissimilarity coefficient
