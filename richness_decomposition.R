@@ -1,5 +1,5 @@
 library(tidyverse)
-bbs <- read_csv("bbs_abundances_by_site.csv")
+bbs <- read_csv("bbs_abundances_by_site.csv", col_types = "iddii")
 
 species_by_site <- as.data.frame(matrix(0, ncol = length(unique(bbs$species)), nrow = length(unique(bbs$site))))
 names(species_by_site) <- as.integer(unique(bbs$species))
