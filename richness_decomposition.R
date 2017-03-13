@@ -1,5 +1,5 @@
 library(tidyverse)
-library(ecosim)
+library(EcoSimR)
 
 bbs <- read_csv("bbs_abundances_by_site.csv")
 
@@ -46,3 +46,4 @@ get_sorenson_matrix <- function(cooccurrence_df) {
 }
 
 prac_sor <- get_sorenson_matrix(pracdf)
+prac_null <- cooc_null_model(t(pracdf), algo = "sim9",saveSeed = TRUE)
