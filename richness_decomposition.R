@@ -5,7 +5,17 @@ bbs <- read_csv("bbs_abundances_by_site.csv")
 
 bbs %>%
   select(site, species, count) %>%
-  spread(key = species, value = count) -> species_by_site
+  spread(key = species, value = count) %>%
+  select(-site) -> species_by_site
+  
+#replace abundance with occurence
+bbs_cooc <- matrix(0, nrow = nrow(species_by_site), ncol = ncol(species_by_site))
+for (i in 1:ncol(bbs_cooc)){
+  locs <- which(!is.na(species_by_site[,i]))
+  for (j in 1:length(locs)){
+    bbs_cooc[j,i] <- 1
+  }
+}
 
 #Species cooccurence matrix using sorensen-based dissimilarity coefficient
 prac <- matrix(rbinom(24, 1, .5), ncol = 4)
