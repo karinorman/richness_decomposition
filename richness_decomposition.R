@@ -9,7 +9,7 @@ bbs %>%
   select(-site) -> species_by_site
   
 #replace abundance with occurence
-bbs_cooc <- matrix(0, nrow = nrow(species_by_site), ncol = ncol(species_by_site))
+bbs_cooc <- as_data_frame(matrix(0, nrow = nrow(species_by_site), ncol = ncol(species_by_site)))
 for (i in 1:ncol(bbs_cooc)){
   locs <- which(!is.na(species_by_site[,i]))
   for (j in 1:length(locs)){
@@ -18,11 +18,6 @@ for (i in 1:ncol(bbs_cooc)){
 }
 
 #Species cooccurence matrix using sorensen-based dissimilarity coefficient
-prac <- matrix(rbinom(24, 1, .5), ncol = 4)
-pracdf <- as.data.frame(prac)
-names(pracdf) <- c('a','b','c','d')
-
-
 get_sorenson_matrix <- function(cooccurrence_df) {
   a_matrix <-
     matrix(nrow = ncol(cooccurrence_df),
@@ -52,8 +47,16 @@ get_sorenson_matrix <- function(cooccurrence_df) {
   }
   
   sorenson <- dissimilarity / ((2 * a_matrix) + dissimilarity)
-  return(sorenson)
+  return(as_data_frame(sorenson))
 }
 
+#Test Case
+prac <- matrix(rbinom(24, 1, .5), ncol = 4)
+pracdf <- as.data.frame(prac)
+names(pracdf) <- c('a','b','c','d')
 prac_sor <- get_sorenson_matrix(pracdf)
-prac_null <- cooc_null_model(t(pracdf), algo = "sim9",saveSeed = TRUE)
+prac_null <- cooc_null_model(t(pracdf), algo = "sim9", nReps = 1000, saveSeed = TRUE)
+plot(prac_null)
+
+#BBS Data
+bbs_sor <- get_sorenson_matrix(bbs_cooc)
