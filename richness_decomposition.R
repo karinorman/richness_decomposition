@@ -50,13 +50,26 @@ get_sorenson_matrix <- function(cooccurrence_df) {
   return(as_data_frame(sorenson))
 }
 
+# Calculate simulated mean and standard deviation for pairwise dissimilarity
+get_sim_stats <- function(dissimilarity, null_number){
+  nulls <- matrix(0, nrow = nrow(dissimilarity)^2, ncol = null_number)
+  for (i in 1:null_number){
+    null_matrix <- cooc_null_model(t(dissimilarity), algo = "sim9", nReps = 1000, saveSeed = FALSE)$Randomized.Data
+    nulls[,i] <- as.numeric(null_matrix)
+  }
+  sim_mean <- as.matrix(apply(nulls, 1, mean))
+  sim_sd <-  as.matrix(apply(nulls, 1, sd))
+  list(nulls = nulls, sim_mean = sim_mean, sim_sd = sim_sd)
+}
+
 #Test Case
 prac <- matrix(rbinom(24, 1, .5), ncol = 4)
 pracdf <- as.data.frame(prac)
 names(pracdf) <- c('a','b','c','d')
 prac_sor <- get_sorenson_matrix(pracdf)
-prac_null <- cooc_null_model(t(pracdf), algo = "sim9", nReps = 1000, saveSeed = TRUE)
-plot(prac_null)
+prac_stats <- get_sim_stats(prac_sor, 10)
 
 #BBS Data
 bbs_sor <- get_sorenson_matrix(bbs_cooc)
+bbs_sim_stats <- get_sim_stats(bbs_sor, 20)
+
